@@ -31,7 +31,7 @@
 
 ## 本地运行
 
-1. 使用微信开发者工具打开目录 `D:\Documents\plug\aladin-weixin`
+1. 使用微信开发者工具打开当前项目目录
 2. 选择“小程序”项目
 3. 如未配置 AppID，可先使用测试号或 `touristappid`
 4. 进入 `pages/aladin/aladin` 页面查看星图
@@ -40,7 +40,7 @@
 
 这个仓库只保留了与 `aladin.lite` 微信小程序适配和测试页直接相关的文件，未包含原业务小程序中的其他页面、接口、登录逻辑与私有配置。
 
-`Aladin.wx.js` 的技术说明见 [docs/aladin-wx-technical.md](/D:/Documents/plug/aladin-weixin/docs/aladin-wx-technical.md)。
+`Aladin.wx.js` 的技术说明见 `docs/aladin-wx-technical.md`。
 
 ## 上传到 GitHub
 
