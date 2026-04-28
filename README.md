@@ -45,16 +45,3 @@
 ## 许可协议
 
 本项目与 `aladin.lite` 保持一致，采用 `GNU GPL v3.0` 许可协议。完整文本见 `LICENSE`。
-
-## 上传到 GitHub
-
-```powershell
-git init
-git add .
-git commit -m "Initial open-source release for aladin weixin sample"
-git branch -M main
-git remote add origin <your-github-repo-url>
-git push -u origin main
-```
-
-仓库已附带 `GPL-3.0` 许可证文本。
