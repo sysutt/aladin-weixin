@@ -42,6 +42,10 @@
 
 `Aladin.wx.js` 的技术说明见 `docs/aladin-wx-technical.md`。
 
+## 许可协议
+
+本项目与 `aladin.lite` 保持一致，采用 `GNU GPL v3.0` 许可协议。完整文本见 `LICENSE`。
+
 ## 上传到 GitHub
 
 ```powershell
@@ -53,4 +57,4 @@ git remote add origin <your-github-repo-url>
 git push -u origin main
 ```
 
-建议在创建 GitHub 仓库时补充你确认过的开源许可证文件。
+仓库已附带 `GPL-3.0` 许可证文本。
