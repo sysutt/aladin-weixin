@@ -1,5 +1,7 @@
 # aladin-weixin
 
+作者：sysutt(从前有个T)
+
 基于 `aladin.lite` 共享协议整理的微信小程序开源样例仓库，包含：
 
 - 适配微信小程序 Canvas 2D 的 `Aladin.wx.js`
