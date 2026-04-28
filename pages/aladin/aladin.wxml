@@ -1,0 +1,97 @@
+<!-- pages/aladin/aladin.wxml -->
+<!--
+  覆盖层说明：
+  canvas（即使 type="2d"）在部分设备/版本中处于原生层，普通 view 无法覆盖，
+  因此所有浮层改用 cover-view。
+  cover-view 内不允许嵌套 scroll-view，目标列改为手动触摸横向滚动实现。
+-->
+<view class="root" style="width:{{canvasW}}px; height:{{canvasH}}px;">
+
+  <!-- ── 星图画布（充满全屏）──────────────────────────────── -->
+  <canvas
+    id="starmap"
+    type="2d"
+    class="starmap"
+    style="width:{{canvasW}}px; height:{{canvasH}}px;"
+    bindtouchstart="onTouchStart"
+    bindtouchmove="onTouchMove"
+    bindtouchend="onTouchEnd"
+    catchtouchmove="onTouchMove"
+  ></canvas>
+
+  <!-- ── 初始化加载蒙层 ──────────────────────────────────── -->
+  <cover-view wx:if="{{!ready}}" class="mask">
+    <cover-view class="mask-inner">
+      <cover-view class="mask-text">正在初始化星图…</cover-view>
+      <cover-view class="mask-hint">首次加载需下载星图瓦片，请保持网络畅通</cover-view>
+    </cover-view>
+  </cover-view>
+
+  <!-- ── 瓦片加载指示（右上角小角标）──────────────────────── -->
+  <cover-view wx:if="{{ready && tilesLoading}}" class="tile-loading">
+    <cover-view class="tile-dot"></cover-view>
+    <cover-view class="tile-text">加载中</cover-view>
+  </cover-view>
+
+  <!-- ── 顶部坐标栏 ──────────────────────────────────────── -->
+  <cover-view wx:if="{{ready}}" class="topbar">
+    <cover-view class="coords">RA {{ra}}°  Dec {{dec}}°</cover-view>
+    <cover-view class="fov-tag">FOV {{fov}}°</cover-view>
+  </cover-view>
+
+  <!-- ── 右侧缩放按钮 ────────────────────────────────────── -->
+  <cover-view wx:if="{{ready}}" class="zoom-btns">
+    <cover-view class="zoom-btn" bindtap="zoomIn">＋</cover-view>
+    <cover-view class="zoom-btn zm-gap" bindtap="zoomOut">－</cover-view>
+  </cover-view>
+
+  <!-- ── 底部控制面板 ────────────────────────────────────── -->
+  <cover-view wx:if="{{ready}}" class="panel">
+
+    <!-- 快捷目标：手动横向滑动 -->
+    <cover-view
+      class="targets-wrap"
+      bindtouchstart="onTargetTouchStart"
+      bindtouchmove="onTargetTouchMove"
+      bindtouchend="onTargetTouchEnd"
+    >
+      <cover-view class="targets-inner" style="transform:translateX({{targetScrollX}}px)">
+        <cover-view
+          wx:for="{{targets}}" wx:key="name"
+          class="target-btn {{currentTarget === item.name ? 'active' : ''}}"
+          bindtap="gotoTarget"
+          data-name="{{item.name}}"
+          data-ra="{{item.ra}}"
+          data-dec="{{item.dec}}"
+          data-fov="{{item.fov}}"
+        >{{item.label}}</cover-view>
+      </cover-view>
+    </cover-view>
+
+    <!-- 工具栏 -->
+    <cover-view class="toolbar">
+      <cover-view class="tool-btn {{showGrid ? 'on' : ''}}" bindtap="toggleGrid">
+        <cover-view class="tool-icon">⊞</cover-view>
+        <cover-view class="tool-label">网格</cover-view>
+      </cover-view>
+      <cover-view class="tool-btn" bindtap="resetFov">
+        <cover-view class="tool-icon">⊙</cover-view>
+        <cover-view class="tool-label">复位</cover-view>
+      </cover-view>
+      <cover-view class="tool-btn {{survey==='DSS' ? 'on' : ''}}" bindtap="surveyDSS">
+        <cover-view class="tool-icon">🔭</cover-view>
+        <cover-view class="tool-label">DSS</cover-view>
+      </cover-view>
+      <cover-view class="tool-btn {{survey==='2MASS' ? 'on' : ''}}" bindtap="survey2MASS">
+        <cover-view class="tool-icon">🌌</cover-view>
+        <cover-view class="tool-label">2MASS</cover-view>
+      </cover-view>
+      <cover-view class="tool-btn {{survey==='SDSS' ? 'on' : ''}}" bindtap="surveySDSS">
+        <cover-view class="tool-icon">🌠</cover-view>
+        <cover-view class="tool-label">SDSS</cover-view>
+      </cover-view>
+    </cover-view>
+
+  </cover-view>
+
+</view>

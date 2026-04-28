@@ -1,0 +1,8 @@
+project.private.config.json
+node_modules/
+miniprogram_npm/
+dist/
+tmp/
+*.zip
+.DS_Store
+Thumbs.db

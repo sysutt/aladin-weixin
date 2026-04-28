@@ -1,0 +1,18 @@
+{
+  "pages": [
+    "pages/aladin/aladin"
+  ],
+  "window": {
+    "navigationBarTitleText": "Aladin WX Demo",
+    "navigationBarBackgroundColor": "#000510",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#000510",
+    "backgroundTextStyle": "light"
+  },
+  "networkTimeout": {
+    "request": 15000,
+    "downloadFile": 15000
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

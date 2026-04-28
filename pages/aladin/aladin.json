@@ -1,0 +1,10 @@
+{
+  "navigationBarTitleText": "星图",
+  "navigationStyle": "default",
+  "navigationBarBackgroundColor": "#000510",
+  "navigationBarTextStyle": "white",
+  "backgroundColor": "#000510",
+  "backgroundTextStyle": "light",
+  "disableScroll": true,
+  "usingComponents": {}
+}
