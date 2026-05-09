@@ -635,6 +635,70 @@ class AladinWX {
     for (let ra = ra0; ra <= ra0 + step * 6; ra += step) {
       this._drawDecLine(ctx, ((ra % 360) + 360) % 360);
     }
+
+    // ── 绘制赤经赤纬刻度标签 ──────────────────────────────────────────────
+    this._drawGridLabels(ctx, step, ra0, dec0);
+  }
+
+  /**
+   * 在网格线上绘制赤经赤纬刻度标签
+   */
+  _drawGridLabels(ctx, step, ra0, dec0) {
+    ctx.save();
+    ctx.font = '10px sans-serif';
+
+    // ── 在赤纬线（等 Dec 圈）上标注赤纬值 ──────────────────────────────────
+    for (let dec = dec0; dec <= dec0 + step * 6; dec += step) {
+      if (dec < -90 || dec > 90) continue;
+      const label = this._formatDecLabel(dec);
+      // 取画布中心 RA 处的点来标注
+      const p = this.world2pix(this.ra, dec);
+      if (p.visible && p.x >= 0 && p.x <= this.width && p.y >= 0 && p.y <= this.height) {
+        ctx.fillStyle = 'rgba(100, 150, 255, 0.7)';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'bottom';
+        ctx.fillText(label, p.x, p.y - 4);
+      }
+    }
+
+    // ── 在赤经线（等 RA 半圆）上标注赤经值 ──────────────────────────────────
+    for (let ra = ra0; ra <= ra0 + step * 6; ra += step) {
+      const raNorm = ((ra % 360) + 360) % 360;
+      const label = this._formatRaLabel(raNorm);
+      // 取画布中心 Dec 处的点来标注
+      const p = this.world2pix(raNorm, this.dec);
+      if (p.visible && p.x >= 0 && p.x <= this.width && p.y >= 0 && p.y <= this.height) {
+        ctx.fillStyle = 'rgba(100, 150, 255, 0.7)';
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(label, p.x + 4, p.y);
+      }
+    }
+
+    ctx.restore();
+  }
+
+  /**
+   * 格式化赤纬标签（如 +30°, -15°）
+   */
+  _formatDecLabel(dec) {
+    const sign = dec >= 0 ? '+' : '-';
+    const abs = Math.abs(dec);
+    const d = Math.floor(abs);
+    const m = Math.round((abs - d) * 60);
+    if (m === 0) return `${sign}${d}°`;
+    return `${sign}${d}°${m}'`;
+  }
+
+  /**
+   * 格式化赤经标签（如 12h, 18h）
+   */
+  _formatRaLabel(ra) {
+    const hours = ra / 15;
+    const h = Math.floor(hours);
+    const m = Math.round((hours - h) * 60);
+    if (m === 0) return `${h}h`;
+    return `${h}h${m}m`;
   }
 
   _drawRaLine(ctx, dec) {
