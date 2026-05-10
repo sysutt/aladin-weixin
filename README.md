@@ -26,7 +26,9 @@
 `- utils/
    `- aladin-adapter/
       |- Aladin.wx.js
-      `- HEALPixTileManager.js
+      |- HEALPixTileManager.js
+      |- catalog-overlay.js     ← 星表叠加层（SIMBAD / Gaia DR3）
+      `- tap-query.js           ← TAP 协议查询（SIMBAD TAP、Gaia ESA TAP）
 ```
 
 ## 本地运行
@@ -46,12 +48,28 @@
 - **四三角形纹理映射**：以瓦片中心为公共顶点拆分 4 个三角形，消除对角线仿射不连续
 - **事件系统**：`ready`、`positionChanged`、`tilesLoading`、`tilesLoaded` 事件通知
 - **渲染后钩子**：`onAfterRender` 回调，支持叠加自定义内容（如 AstroBin 参考图像）
+- **SIMBAD 天体注解**：通过 SIMBAD TAP 查询视场内天体，按类型（星系/星团/星云/恒星）着色标注，点击显示详情（主 ID、类型、视差/距离、自行）
+- **Gaia DR3 恒星图层**：通过 ESA Gaia TAP 查询视场内恒星，按星等调整标记大小，显示 G 波段星等、视差与自行
+- **点击选中高亮**：短触点（<300ms、移动<10px）触发命中测试，选中天体以橙色圆环高亮，弹出详情卡片
+- **防抖刷新**：视场改变时自动刷新图层查询，内置防抖避免频繁请求
+
+## 网络域名白名单
+
+使用 SIMBAD / Gaia 图层时，需要在微信小程序管理后台（开发→开发管理→服务器域名→request 合法域名）中添加以下域名：
+
+| 图层 | 域名 |
+|------|------|
+| SIMBAD 天体注解 | `simbad.cds.unistra.fr` |
+| Gaia DR3 恒星 | `gea.esac.esa.int` |
+| HiPS 瓦片（DSS/2MASS/SDSS）| `alasky.cds.unistra.fr` |
+
+> 开发调试期间可在微信开发者工具中勾选"不校验合法域名"临时绕过。
 
 ## 开源说明
 
 这个仓库只保留了与 `aladin.lite` 微信小程序适配和测试页直接相关的文件，未包含原业务小程序中的其他页面、接口、登录逻辑与私有配置。
 
-`Aladin.wx.js` 的技术说明见 `docs/aladin-wx-technical.md`。
+技术文档见 `docs/aladin-wx-technical.md`，包含星图引擎和星表叠加层的实现细节。
 
 ## 许可协议
 

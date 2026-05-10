@@ -7,7 +7,7 @@
 -->
 <view class="root" style="width:{{canvasW}}px; height:{{canvasH}}px;">
 
-  <!-- ── 星图画布（充满全屏）──────────────────────────────── -->
+  <!-- ── 星图画布（充满全屏）──────────────────────────────────── -->
   <canvas
     id="starmap"
     type="2d"
@@ -19,7 +19,7 @@
     catchtouchmove="onTouchMove"
   ></canvas>
 
-  <!-- ── 初始化加载蒙层 ──────────────────────────────────── -->
+  <!-- ── 初始化加载蒙层 ──────────────────────────────────────── -->
   <cover-view wx:if="{{!ready}}" class="mask">
     <cover-view class="mask-inner">
       <cover-view class="mask-text">正在初始化星图…</cover-view>
@@ -27,25 +27,31 @@
     </cover-view>
   </cover-view>
 
-  <!-- ── 瓦片加载指示（右上角小角标）──────────────────────── -->
+  <!-- ── 瓦片加载指示（右上角小角标）──────────────────────────── -->
   <cover-view wx:if="{{ready && tilesLoading}}" class="tile-loading">
     <cover-view class="tile-dot"></cover-view>
     <cover-view class="tile-text">加载中</cover-view>
   </cover-view>
 
-  <!-- ── 顶部坐标栏 ──────────────────────────────────────── -->
+  <!-- ── 星表查询指示 ───────────────────────────────────────────── -->
+  <cover-view wx:if="{{ready && catalogLoading}}" class="catalog-loading">
+    <cover-view class="tile-dot"></cover-view>
+    <cover-view class="tile-text">星表查询中</cover-view>
+  </cover-view>
+
+  <!-- ── 顶部坐标栏 ──────────────────────────────────────────── -->
   <cover-view wx:if="{{ready}}" class="topbar">
     <cover-view class="coords">RA {{ra}}°  Dec {{dec}}°</cover-view>
     <cover-view class="fov-tag">FOV {{fov}}°</cover-view>
   </cover-view>
 
-  <!-- ── 右侧缩放按钮 ────────────────────────────────────── -->
+  <!-- ── 右侧缩放按钮 ────────────────────────────────────────── -->
   <cover-view wx:if="{{ready}}" class="zoom-btns">
     <cover-view class="zoom-btn" bindtap="zoomIn">＋</cover-view>
     <cover-view class="zoom-btn zm-gap" bindtap="zoomOut">－</cover-view>
   </cover-view>
 
-  <!-- ── 底部控制面板 ────────────────────────────────────── -->
+  <!-- ── 底部控制面板 ────────────────────────────────────────── -->
   <cover-view wx:if="{{ready}}" class="panel">
 
     <!-- 快捷目标：手动横向滑动 -->
@@ -90,8 +96,30 @@
         <cover-view class="tool-icon">🌠</cover-view>
         <cover-view class="tool-label">SDSS</cover-view>
       </cover-view>
+      <!-- SIMBAD 天体注解图层 -->
+      <cover-view class="tool-btn {{catalogSimbadOn ? 'on' : ''}}" bindtap="toggleCatalogSimbad">
+        <cover-view class="tool-icon">☆</cover-view>
+        <cover-view class="tool-label">{{catalogSimbadOn && catalogSimbadCount > 0 ? catalogSimbadCount + '个' : '注解'}}</cover-view>
+      </cover-view>
+      <!-- Gaia DR3 恒星图层 -->
+      <cover-view class="tool-btn {{catalogGaiaOn ? 'on' : ''}}" bindtap="toggleCatalogGaia">
+        <cover-view class="tool-icon">✦</cover-view>
+        <cover-view class="tool-label">{{catalogGaiaOn && catalogGaiaCount > 0 ? catalogGaiaCount + '颗' : 'Gaia'}}</cover-view>
+      </cover-view>
     </cover-view>
 
+  </cover-view>
+
+  <!-- ── 星表天体详情弹窗 ──────────────────────────────────────── -->
+  <cover-view wx:if="{{showCatalogDetail && catalogSourceDetail}}" class="catalog-mask" bindtap="closeCatalogDetail">
+    <cover-view class="catalog-card" catchtap="">
+      <cover-view class="catalog-title">{{catalogSourceDetail.title}}</cover-view>
+      <cover-view wx:for="{{catalogSourceDetail.lines}}" wx:key="index" class="catalog-line">
+        <cover-view class="catalog-lbl">{{item.label}}</cover-view>
+        <cover-view class="catalog-val">{{item.value}}</cover-view>
+      </cover-view>
+      <cover-view class="catalog-close" bindtap="closeCatalogDetail">关闭</cover-view>
+    </cover-view>
   </cover-view>
 
 </view>
