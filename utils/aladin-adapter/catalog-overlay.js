@@ -192,6 +192,10 @@ CatalogOverlay.prototype._render = function(ctx, aladin) {
   var sources = this.sources;
   var showLbl = this.showLabels && aladin.fov <= this.labelMinSize;
 
+  // 像素格去重：格子边长 = max(size*1.5, 6)，同格只画一个标记（选中天体豁免）
+  var cellSz  = Math.max(size * 1.5, 6);
+  var drawnCells = {};
+
   ctx.save();
   ctx.lineWidth = 1.2;
 
@@ -200,6 +204,12 @@ CatalogOverlay.prototype._render = function(ctx, aladin) {
     var p = aladin.world2pix(s.ra, s.dec);
     if (!p.visible) continue;
     if (p.x < -20 || p.x > aladin.width + 20 || p.y < -20 || p.y > aladin.height + 20) continue;
+
+    if (!s._selected) {
+      var cellKey = (Math.round(p.x / cellSz) | 0) + ',' + (Math.round(p.y / cellSz) | 0);
+      if (drawnCells[cellKey]) continue;
+      drawnCells[cellKey] = true;
+    }
 
     var color = this._color;
     var shape = this._shape;
