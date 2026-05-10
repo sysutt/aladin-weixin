@@ -35,6 +35,14 @@
 
 var tap = require('./tap-query');
 
+// 球面大圆距离（度），用于后处理过滤 TAP 查询结果
+function _angDist(ra1, dec1, ra2, dec2) {
+  var d = Math.sin(dec1 * Math.PI / 180) * Math.sin(dec2 * Math.PI / 180)
+        + Math.cos(dec1 * Math.PI / 180) * Math.cos(dec2 * Math.PI / 180)
+          * Math.cos((ra2 - ra1) * Math.PI / 180);
+  return Math.acos(Math.min(1, Math.max(-1, d))) * 180 / Math.PI;
+}
+
 // ─────────────────────────────────────────────────────────────────
 // SIMBAD 类型 → 显示样式映射
 // ─────────────────────────────────────────────────────────────────
@@ -191,6 +199,7 @@ CatalogOverlay.prototype._render = function(ctx, aladin) {
     var s = sources[i];
     var p = aladin.world2pix(s.ra, s.dec);
     if (!p.visible) continue;
+    if (p.x < -20 || p.x > aladin.width + 20 || p.y < -20 || p.y > aladin.height + 20) continue;
 
     var color = this._color;
     var shape = this._shape;
@@ -374,6 +383,12 @@ CatalogLayer.prototype._doQuery = function(ra, dec, fov) {
 
   promise.then(function(sources) {
     self._loading = false;
+    // 防御性过滤：剔除投影超出查询半径的天体（RA=0°/360° 边界处 TAP 服务可能
+    // 将圆圈两侧都纳入结果，但旧查询缓存可能混入当前视场之外的天体）
+    var maxDist = radius * 1.5;
+    sources = sources.filter(function(s) {
+      return _angDist(ra, dec, s.ra, s.dec) <= maxDist;
+    });
     self.overlay.replace(sources);
     if (typeof self.onLoad === 'function') self.onLoad(sources, null);
   }).catch(function(err) {
